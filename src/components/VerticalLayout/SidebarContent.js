@@ -103,7 +103,7 @@ const SidebarContent = props => {
             </li>
 
             <li>
-              <Link to="#" className=" ">
+              <Link to="/clientes" className=" ">
                 <i className="bx bx-calendar" />
                 <span>Clientes</span>
               </Link>
