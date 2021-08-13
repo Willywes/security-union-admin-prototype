@@ -1,6 +1,7 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
-const TableCustomer = ({customers, setSection}) => {
+const TableCustomer = ({customers, setSection, destroy}) => {
 
     return (
         <div className="row">
@@ -26,9 +27,11 @@ const TableCustomer = ({customers, setSection}) => {
                                         <thead>
                                         <tr>
                                             {/*<th>ID</th>*/}
-                                            <th>NOMBRE</th>
+                                            <th>NOMBRE EMPRESA</th>
                                             <th>DIRECCIÓN</th>
-                                            <th>TELÉFONO</th>
+                                            <th>NOMBRE CONTACTO</th>
+                                            <th>EMAIL CONTACTO</th>
+                                            <th>TELÉFONO CONTACTO</th>
                                             <th></th>
                                         </tr>
                                         </thead>
@@ -39,10 +42,20 @@ const TableCustomer = ({customers, setSection}) => {
                                                     {/*<td>{customer.id}</td>*/}
                                                     <td>{customer.name}</td>
                                                     <td>{customer.address}</td>
-                                                    <td>{customer.phone}</td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-primary"><i
-                                                            className="fa fa-eye"/></button>
+                                                    <td>{customer.contact_name}</td>
+                                                    <td>{customer.contact_email}</td>
+                                                    <td>{customer.contact_phone}</td>
+                                                    <td style={{ width : '1%'}}>
+                                                        <div className="btn-group" role="group">
+                                                            <Link to={`/clientes/${customer.id}`} style={{width: '35px'}}
+                                                                    className="btn btn-sm btn-outline-primary">
+                                                                <i className="fa fa-eye"/>
+                                                            </Link>
+                                                            <button type="button" onClick={() => destroy(customer.id)} style={{width: '35px'}}
+                                                                    className="btn btn-sm btn-outline-danger">
+                                                                <i className="fa fa-trash"/>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             })
@@ -51,8 +64,8 @@ const TableCustomer = ({customers, setSection}) => {
                                         </tbody>
                                     </table>
                                     :
-                                    <div className="alert alert-info">
-                                        <h3>No existen clientes</h3>
+                                    <div className="alert alert-info text-center">
+                                        <p className="mb-0">No existen clientes</p>
                                     </div>
                             }
                         </div>

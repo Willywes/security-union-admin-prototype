@@ -13,9 +13,11 @@ import ForgetPwd from "../pages/Authentication/ForgetPassword"
 // Dashboard
 import Dashboard from "../pages/Dashboard/index"
 import Customer from "../pages/Customer";
+import CustomerDetail from "../pages/CustomerDetail";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
+  { path: "/clientes/:customer_id", component: CustomerDetail },
   { path: "/clientes", component: Customer },
 
   // //profile

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import toastr from  'toastr'
 import {v4 as uuidv4} from 'uuid';
 
 const CreateCustomer = ({customers, setCustomers, setSection}) => {
@@ -7,10 +8,19 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
         id: uuidv4(),
         name: '',
         address: '',
-        phone: ''
+        commune: '',
+        region: '',
+        contact_name: '',
+        contact_phone: '',
+        contact_email: '',
+        has_store_in: false,
+        has_routes: false,
+        store_in: {},
+        routes: {}
     }
 
     const [customer, setCustomer] = useState(initialCustomer);
+    const [sending, setSending] = useState(false);
 
     const handleCustomer = (e) => {
         setCustomer({
@@ -20,9 +30,26 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
     }
 
     const store = () => {
-        const newList = [...customers, customer]
-        setCustomers(newList)
-        reset()
+
+        if(
+            customer.name == '' ||
+            customer.address == '' ||
+            customer.contact_name == '' ||
+            customer.contact_email == '' ||
+            customer.contact_phone == ''
+        ){
+            toastr.warning('Complete todos los campos.')
+            return null;
+        }
+
+        setSending(true)
+        setTimeout(() => {
+            setSending(false)
+            const newList = [...customers, customer]
+            setCustomers(newList)
+            toastr.success('Cliente agregado correctamente.')
+            reset()
+        }, 500)
     }
 
     const reset = () => {
@@ -45,12 +72,13 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                         <div className="row">
                             <div className="col-12">
                                 <div className="form-group mb-3">
-                                    <label htmlFor="name">Nombre</label>
-                                    <input type="text" id="name" name="name" value={customer.name} onChange={handleCustomer}
+                                    <label htmlFor="name">Nombre Empresa</label>
+                                    <input type="text" id="name" name="name" value={customer.name}
+                                           onChange={handleCustomer}
                                            className="form-control"/>
                                 </div>
                             </div>
-                            <div className="col-12">
+                            <div className="col-6">
                                 <div className="form-group mb-3">
                                     <label htmlFor="address">Dirección</label>
                                     <input type="text" id="address" name="address" value={customer.address}
@@ -58,10 +86,56 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                                            className="form-control"/>
                                 </div>
                             </div>
-                            <div className="col-12">
+                            <div className="col-3">
                                 <div className="form-group mb-3">
-                                    <label htmlFor="phone">Fono</label>
-                                    <input type="text" id="phone" name="phone" value={customer.phone}
+                                    <label htmlFor="region">Región</label>
+                                    <select id="region" name="region" value={customer.region}
+                                            onChange={handleCustomer}
+                                            className="form-control">
+                                        <option value="Región 1">Región 1</option>
+                                        <option value="Región 2">Región 2</option>
+                                        <option value="Región 3">Región 3</option>
+                                        <option value="Región 4">Región 4</option>
+                                        <option value="Región 5">Región 5</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div className="form-group mb-3">
+                                    <label htmlFor="commune">Comuna</label>
+                                    <select id="commune" name="commune" value={customer.commune}
+                                            onChange={handleCustomer}
+                                            className="form-control">
+                                        <option value="Comuna 1">Comuna 1</option>
+                                        <option value="Comuna 2">Comuna 2</option>
+                                        <option value="Comuna 3">Comuna 3</option>
+                                        <option value="Comuna 4">Comuna 4</option>
+                                        <option value="Comuna 5">Comuna 5</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="form-group mb-3">
+                                    <label htmlFor="contact_name">Nombre Contacto</label>
+                                    <input type="text" id="contact_name" name="contact_name"
+                                           value={customer.contact_name} onChange={handleCustomer}
+                                           className="form-control"/>
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div className="form-group mb-3">
+                                    <label htmlFor="contact_email">Email Contacto</label>
+                                    <input type="text" id="contact_email" name="contact_email"
+                                           value={customer.contact_email}
+                                           onChange={handleCustomer}
+                                           className="form-control"/>
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div className="form-group mb-3">
+                                    <label htmlFor="contact_phone">Teléfono Contacto</label>
+                                    <input type="text" id="contact_phone" name="contact_phone"
+                                           value={customer.contact_phone}
                                            onChange={handleCustomer}
                                            className="form-control"/>
                                 </div>
@@ -74,11 +148,17 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                                         </button>
                                     </div>
                                     <div className="col-auto text-right">
-                                        <button className="btn btn-primary"
-                                                onClick={store}>
-                                            <i className="fa fa-save"/> Guardar
-                                        </button>
 
+                                        {
+                                            sending ?
+                                                <button className="btn btn-primary disabled">
+                                                    <i className="bx bx-loader bx-spin align-middle"/> Guardar
+                                                </button> :
+                                                <button className="btn btn-primary"
+                                                        onClick={store}>
+                                                    <i className="fa fa-save"/> Guardar
+                                                </button>
+                                        }
                                     </div>
                                 </div>
 
