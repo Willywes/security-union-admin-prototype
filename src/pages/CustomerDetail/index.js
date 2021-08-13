@@ -2,11 +2,14 @@ import React, {useEffect, useState} from 'react';
 import MetaTags from "react-meta-tags";
 import {Container} from "reactstrap";
 import {useParams} from "react-router-dom";
+import CardCustomer from "./CardCustomer";
+import Menu from "./Menu";
+import LogisticCenters from "./sections/LogisticCenters";
 
 const CustomerDetail = () => {
 
-    const [section, setSection] = useState('init');
-    const [customer, setCustomer] = useState({id: ''});
+    const [section, setSection] = useState('logistic_centers');
+    const [customer, setCustomer] = useState(null);
 
     let {customer_id} = useParams();
 
@@ -20,12 +23,15 @@ const CustomerDetail = () => {
         <React.Fragment>
             <div className="page-content">
                 <MetaTags>
-                    <title>Dashboard | Innovaweb</title>
+                    <title>Detalle de Cliente | Innovaweb</title>
                 </MetaTags>
                 <Container fluid>
-
-                    Pijas {customer.name}
-
+                    <CardCustomer customer={customer} setCustomer={setCustomer}/>
+                    <Menu section={section} setSection={setSection} customer={customer} setCustomer={setCustomer}/>
+                    {
+                        section == 'logistic_centers' && customer ?
+                            <LogisticCenters customer={customer} setCustomer={setCustomer}/> : null
+                    }
                 </Container>
             </div>
         </React.Fragment>

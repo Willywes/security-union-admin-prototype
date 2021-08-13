@@ -48,7 +48,7 @@ const Customer = () => {
         <React.Fragment>
             <div className="page-content">
                 <MetaTags>
-                    <title>Dashboard | Innovaweb</title>
+                    <title>Clientes | Innovaweb</title>
                 </MetaTags>
                 <Container fluid>
                     {

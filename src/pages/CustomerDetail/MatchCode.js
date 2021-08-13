@@ -1,93 +1,83 @@
-import React, {useState} from 'react';
-import toastr from  'toastr'
-import {v4 as uuidv4} from 'uuid';
+import React, {Fragment, useEffect, useState} from 'react';
+import toastr from "toastr";
 
-const CreateCustomer = ({customers, setCustomers, setSection}) => {
+const CardCustomer = ({customer}) => {
 
-    const initialCustomer = {
-        id: uuidv4(),
-        name: '',
-        address: '',
-        commune: '',
-        region: '',
-        contact_name: '',
-        contact_phone: '',
-        contact_email: '',
-        has_store_in: false,
-        has_routes: false,
-        match_code : '',
-        logistic_centers: [],
-        routes: {}
-    }
-
-    const [customer, setCustomer] = useState(initialCustomer);
     const [sending, setSending] = useState(false);
+    const [disabled, setDisabled] = useState(true);
+    const [localCustomer, setLocalCustomer] = useState(null);
+
+    useEffect(() => {
+        if (customer) {
+            setLocalCustomer(customer)
+        }
+    }, [customer])
 
     const handleCustomer = (e) => {
-        setCustomer({
-            ...customer,
+        setLocalCustomer({
+            ...localCustomer,
             [e.target.name]: e.target.value
         })
     }
 
+    const reset = () => {
+        setLocalCustomer(customer)
+        setDisabled(true)
+    }
+
     const store = () => {
-
-        if(
-            customer.name == '' ||
-            customer.address == '' ||
-            customer.contact_name == '' ||
-            customer.contact_email == '' ||
-            customer.contact_phone == ''
-        ){
-            toastr.warning('Complete todos los campos.')
-            return null;
-        }
-
         setSending(true)
         setTimeout(() => {
+
+            let list = JSON.parse(localStorage.getItem('customers'));
+            const indexCustomer = list.findIndex(c => c.id == customer.id)
+            list[indexCustomer] = localCustomer
+            localStorage.setItem('customers', JSON.stringify(list));
+            toastr.success('Cliente actualizado correctamente.')
             setSending(false)
-            const newList = [...customers, customer]
-            setCustomers(newList)
-            toastr.success('Cliente agregado correctamente.')
-            reset()
+            setDisabled(true)
         }, 500)
     }
 
-    const reset = () => {
-        setCustomer(initialCustomer)
-        setSection('table')
-    }
+    if (!localCustomer) return null;
 
     return (
         <div className="row">
-            <div className="col-md-8 offset-md-2">
+            <div className="col">
                 <div className="card">
-                    <div className="h5 bg-transparent border-bottom text-uppercase card-header">
-                        Crear Cliente
-                    </div>
                     <div className="card-body">
+                        <div className="row mb-3">
+                            <div className="col">
+                                <h2 className="card-title">
+                                    Cliente
+                                </h2>
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col-12">
                                 <div className="form-group mb-3">
                                     <label htmlFor="name">Nombre Empresa</label>
-                                    <input type="text" id="name" name="name" value={customer.name}
+                                    <input type="text" id="name" name="name" value={localCustomer.name}
                                            onChange={handleCustomer}
+                                           disabled={disabled}
                                            className="form-control"/>
                                 </div>
                             </div>
                             <div className="col-6">
                                 <div className="form-group mb-3">
                                     <label htmlFor="address">Dirección</label>
-                                    <input type="text" id="address" name="address" value={customer.address}
+                                    <input type="text" id="address" name="address" value={localCustomer.address}
                                            onChange={handleCustomer}
+                                           disabled={disabled}
                                            className="form-control"/>
                                 </div>
                             </div>
                             <div className="col-3">
                                 <div className="form-group mb-3">
                                     <label htmlFor="region">Región</label>
-                                    <select id="region" name="region" value={customer.region}
+                                    <select id="region" name="region" value={localCustomer.region}
                                             onChange={handleCustomer}
+                                            disabled={disabled}
                                             className="form-control">
                                         <option value="Región 1">Región 1</option>
                                         <option value="Región 2">Región 2</option>
@@ -100,8 +90,9 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                             <div className="col-3">
                                 <div className="form-group mb-3">
                                     <label htmlFor="commune">Comuna</label>
-                                    <select id="commune" name="commune" value={customer.commune}
+                                    <select id="commune" name="commune" value={localCustomer.commune}
                                             onChange={handleCustomer}
+                                            disabled={disabled}
                                             className="form-control">
                                         <option value="Comuna 1">Comuna 1</option>
                                         <option value="Comuna 2">Comuna 2</option>
@@ -115,7 +106,9 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                                 <div className="form-group mb-3">
                                     <label htmlFor="contact_name">Nombre Contacto</label>
                                     <input type="text" id="contact_name" name="contact_name"
-                                           value={customer.contact_name} onChange={handleCustomer}
+                                           value={localCustomer.contact_name}
+                                           onChange={handleCustomer}
+                                           disabled={disabled}
                                            className="form-control"/>
                                 </div>
                             </div>
@@ -123,8 +116,9 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                                 <div className="form-group mb-3">
                                     <label htmlFor="contact_email">Email Contacto</label>
                                     <input type="text" id="contact_email" name="contact_email"
-                                           value={customer.contact_email}
+                                           value={localCustomer.contact_email}
                                            onChange={handleCustomer}
+                                           disabled={disabled}
                                            className="form-control"/>
                                 </div>
                             </div>
@@ -132,28 +126,39 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
                                 <div className="form-group mb-3">
                                     <label htmlFor="contact_phone">Teléfono Contacto</label>
                                     <input type="text" id="contact_phone" name="contact_phone"
-                                           value={customer.contact_phone}
+                                           value={localCustomer.contact_phone}
                                            onChange={handleCustomer}
+                                           disabled={disabled}
                                            className="form-control"/>
                                 </div>
                             </div>
                             <div className="col-12 mt-3 text-right">
                                 <div className="row mb-3">
                                     <div className="col">
-                                        <button className="btn btn-secondary" onClick={reset}>
-                                            <i className="fa fa-times"/> Cancelar
-                                        </button>
+                                        {
+                                            !disabled ? <button className="btn btn-secondary" onClick={reset}>
+                                                <i className="fa fa-times"/> Cancelar
+                                            </button> : null
+                                        }
                                     </div>
                                     <div className="col-auto text-right">
 
                                         {
-                                            sending ?
-                                                <button className="btn btn-primary disabled">
-                                                    <i className="bx bx-loader bx-spin align-middle"/> Guardar
-                                                </button> :
-                                                <button className="btn btn-primary"
-                                                        onClick={store}>
-                                                    <i className="fa fa-save"/> Guardar
+                                            !disabled ?
+                                                <Fragment>
+                                                    {
+                                                        sending ?
+                                                            <button className="btn btn-primary disabled">
+                                                                <i className="bx bx-loader bx-spin align-middle"/> Guardar
+                                                            </button> :
+                                                            <button className="btn btn-primary"
+                                                                    onClick={store}>
+                                                                <i className="fa fa-save"/> Guardar
+                                                            </button>
+                                                    }
+                                                </Fragment> :
+                                                <button className="btn btn-primary" onClick={() => setDisabled(false)}>
+                                                    <i className="fa fa-edit"/> Editar
                                                 </button>
                                         }
                                     </div>
@@ -168,4 +173,4 @@ const CreateCustomer = ({customers, setCustomers, setSection}) => {
     );
 };
 
-export default CreateCustomer
+export default CardCustomer
