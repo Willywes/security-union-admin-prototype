@@ -18,9 +18,9 @@ const Menu = ({section, setSection, customer, setCustomer}) => {
 
                                     <button
                                         style={{width: '150px'}}
-                                        className={`btn btn-${section != 'routes' ? 'outline-' : ''}primary`}
-                                        onClick={() => setSection('routes')}>
-                                        Rutas
+                                        className={`btn btn-${section != 'users' ? 'outline-' : ''}primary`}
+                                        onClick={() => setSection('users')}>
+                                        Usuarios
                                     </button>
 
                                     <button
