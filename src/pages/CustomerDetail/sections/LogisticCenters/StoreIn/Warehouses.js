@@ -3,59 +3,55 @@ import {button} from "react-bootstrap-sweetalert/dist/styles/SweetAlertStyles";
 import {v4 as uuidv4} from "uuid";
 import toastr from "toastr";
 
-const Devices = ({logisticCenter}) => {
+const Warehouses = ({logisticCenter, section, setSection}) => {
 
     if (!logisticCenter) {
         return null;
     }
 
-    const deviceDefault = {
+    const warehouseDefault = {
         id: uuidv4(),
-        brand: '',
-        model: '',
-        serie: '',
+        name: '',
+        number : '',
         logistic_center_id: logisticCenter.id,
-        phone: ''
     }
 
-    const [devices, setDevices] = useState([]);
-    const [device, setDevice] = useState(deviceDefault);
+    const [warehouses, setWarehouses] = useState([]);
+    const [warehouse, setWarehouse] = useState(warehouseDefault);
 
     useEffect(() => {
         if (logisticCenter) {
-            let list = JSON.parse(localStorage.getItem('devices'));
+            let list = JSON.parse(localStorage.getItem('warehouses'));
             if (list) {
                 let filtered = list.filter(f => f.logistic_center_id == logisticCenter.id);
-                setDevices(filtered)
+                setWarehouses(filtered)
             }
         }
     }, [logisticCenter])
 
-    const handleDevices = (e) => {
-        setDevice({
-            ...device,
+    const handleWarehouses = (e) => {
+        setWarehouse({
+            ...warehouse,
             [e.target.name]: e.target.value
         })
     }
 
-    const storeDevice = () => {
+    const store = () => {
         if (
-            device.brand == '' ||
-            device.model == '' ||
-            device.serie == '' ||
-            device.phone == ''
+            warehouse.number == '' ||
+            warehouse.name == ''
         ) {
             toastr.warning('Complete todos los campos.')
             return null;
         }
-        const _devices = [...devices, device];
+        const _warehouses = [...warehouses, warehouse];
 
-        setDevices(_devices)
-        setDevice(deviceDefault)
+        setWarehouses(_warehouses)
+        setWarehouse(warehouseDefault)
 
-        let list = JSON.parse(localStorage.getItem('devices'));
+        let list = JSON.parse(localStorage.getItem('warehouses'));
         let filtered = list ? list.filter(f => f.logistic_center_id != logisticCenter.id) : [];
-        localStorage.setItem('devices', JSON.stringify([...filtered, ..._devices]));
+        localStorage.setItem('warehouses', JSON.stringify([...filtered, ..._warehouses]));
     }
 
     return (
@@ -64,7 +60,26 @@ const Devices = ({logisticCenter}) => {
                 <div className="row">
                     <div className="col d-flex">
                         <div className="h5 text-uppercase my-auto">
-                            Dispositivos
+                            BODEGAS
+                        </div>
+                    </div>
+                    <div className="col-auto">
+                        <div className="button-items">
+
+                            <button
+                                style={{width: '150px'}}
+                                className={`btn btn-${section != 'warehouses' ? 'outline-' : ''}primary`}
+                                onClick={() => setSection('warehouses')}>
+                                BODEGAS
+                            </button>
+
+                            <button
+                                style={{width: '150px'}}
+                                className={`btn btn-${section != 'workers' ? 'outline-' : ''}primary`}
+                                onClick={() => setSection('workers')}>
+                                TRABAJADORES
+                            </button>
+
                         </div>
                     </div>
                     <div className="col-12">
@@ -72,45 +87,29 @@ const Devices = ({logisticCenter}) => {
                     </div>
                 </div>
                 <div className="row">
+
                     <div className="col">
                         <div className="form-group mb-3">
-                            <label htmlFor="brand">Marca</label>
-                            <input type="text" id="brand" name="brand" value={device.brand}
-                                   onChange={handleDevices}
+                            <label htmlFor="number">Número</label>
+                            <input type="number" id="number" name="number" value={warehouse.number}
+                                   onChange={handleWarehouses}
                                    className="form-control"/>
                         </div>
                     </div>
 
-                    <div className="col">
-                        <div className="form-group mb-3">
-                            <label htmlFor="model">Modelo</label>
-                            <input type="text" id="model" name="model" value={device.model}
-                                   onChange={handleDevices}
-                                   className="form-control"/>
-                        </div>
-                    </div>
 
                     <div className="col">
                         <div className="form-group mb-3">
-                            <label htmlFor="serie">Nº Serie</label>
-                            <input type="text" id="serie" name="serie" value={device.serie}
-                                   onChange={handleDevices}
-                                   className="form-control"/>
-                        </div>
-                    </div>
-
-                    <div className="col">
-                        <div className="form-group mb-3">
-                            <label htmlFor="phone">Nº Teléfono</label>
-                            <input type="text" id="phone" name="phone" value={device.phone}
-                                   onChange={handleDevices}
+                            <label htmlFor="name">Nombre</label>
+                            <input type="text" id="name" name="name" value={warehouse.name}
+                                   onChange={handleWarehouses}
                                    className="form-control"/>
                         </div>
                     </div>
 
                     <div className="col-auto" style={{paddingTop: '3px'}}>
                         <div className="button-items">
-                            <button onClick={storeDevice}
+                            <button onClick={store}
                                     className="btn btn-primary btn-block mt-4">
                                 <i className="fa fa-save"/> Agregar
                             </button>
@@ -122,21 +121,17 @@ const Devices = ({logisticCenter}) => {
                         <table className="table table-bordered">
                             <thead>
                             <tr>
-                                <th>MARCA</th>
-                                <th>MODELO</th>
-                                <th>Nº SERIE</th>
-                                <th>Nº TELÉFONO</th>
+                                <th>NÚMERO</th>
+                                <th>NOMBRE</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             {
-                                devices.map((d) =>{
+                                warehouses.map((d) =>{
                                     return <tr key={d.id}>
-                                        <td>{d.brand}</td>
-                                        <td>{d.model}</td>
-                                        <td>{d.serie}</td>
-                                        <td>{d.phone}</td>
+                                        <td>{d.number}</td>
+                                        <td>{d.name}</td>
                                         <td></td>
                                     </tr>
                                 })
@@ -150,4 +145,4 @@ const Devices = ({logisticCenter}) => {
     );
 };
 
-export default Devices
+export default Warehouses

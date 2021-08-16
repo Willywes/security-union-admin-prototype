@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {v4 as uuidv4} from "uuid";
 import {button} from "react-bootstrap-sweetalert/dist/styles/SweetAlertStyles";
 import toastr from "toastr";
-import StoreIn from "./StoreIn/StoreIn";
+import StoreIn from "./StoreIn";
 import Routes from "./Routes";
 import Devices from "./Devices";
 
